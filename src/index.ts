@@ -1,5 +1,7 @@
-const lambda = () => {
+import { RequestHandler } from 'micro';
+
+const run: RequestHandler = () => {
   return 'Hello World';
 };
 
-export default lambda;
+export default run;
