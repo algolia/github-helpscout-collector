@@ -1,9 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 type HScoutClientOptions = {
   appId: string;
   appSecret: string;
 };
+
+type HScoutResponse<T> = Promise<AxiosResponse<T>>;
 
 type HScoutRequestOptions = {
   endpoint: string;
@@ -14,31 +16,74 @@ type HScoutRequestOptions = {
   };
 };
 
-type HScoutTokenReponse = {
+type HScoutAccessTokenReponse = {
   token_type: 'bearer';
   access_token: string;
   expires_in: number;
 };
 
-export const createHelpScoutClient = (options: HScoutClientOptions) => {
-  const request = ({ endpoint, body, headers = {} }: HScoutRequestOptions) =>
-    axios
-      .post(`https://api.helpscout.net/v2${endpoint}`, body, {
-        headers,
-      })
-      .then(response => {
-        return response.data;
-      });
+type HScoutCustomerConversationOptions = {
+  accessToken: string;
+  conversation: {
+    subject: string;
+    mailboxId: number;
+    customer: {
+      email: string;
+    };
+    text: string;
+    tags: string[];
+    status?: string;
+    type?: string;
+  };
+};
+
+export const createHelpScoutClient = (clientOptions: HScoutClientOptions) => {
+  const request: <T>(options: HScoutRequestOptions) => HScoutResponse<T> = ({
+    endpoint,
+    body,
+    headers = {},
+  }) =>
+    axios.post(`https://api.helpscout.net/v2${endpoint}`, body, {
+      headers,
+    });
 
   return {
-    getAccessToken(): Promise<HScoutTokenReponse> {
-      return request({
+    getAccessToken(): HScoutResponse<HScoutAccessTokenReponse> {
+      return request<HScoutAccessTokenReponse>({
         endpoint: '/oauth2/token',
         method: 'POST',
         body: {
           grant_type: 'client_credentials',
-          client_id: options.appId,
-          client_secret: options.appSecret,
+          client_id: clientOptions.appId,
+          client_secret: clientOptions.appSecret,
+        },
+      });
+    },
+
+    createCustomerConversation(options: HScoutCustomerConversationOptions): HScoutResponse<void> {
+      const { accessToken, conversation } = options;
+      const { customer, text, type = 'email', status = 'active', ...rest } = conversation;
+
+      const threads = [
+        {
+          type: 'customer',
+          customer,
+          text,
+        },
+      ];
+
+      return request<void>({
+        endpoint: '/conversations',
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+        body: {
+          ...rest,
+          type,
+          customer,
+          threads,
+          status,
         },
       });
     },
