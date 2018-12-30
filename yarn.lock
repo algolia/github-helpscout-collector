@@ -42,6 +42,13 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
   integrity sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
 
+"@types/test-listen@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/test-listen/-/test-listen-1.1.0.tgz#db7e5b0e277b4a3ee7b90770dae1a41b186458af"
+  integrity sha512-y6ZfbSzYHniCeY6ZAzsQjSAdJInNVoEz4Uhsb81W+RCoNYA59yoG/+XbqPqCPj2KCU3Wa6RFWSozutkGIHIsNQ==
+  dependencies:
+    "@types/node" "*"
+
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -3882,6 +3889,11 @@ test-exclude@^4.2.1:
     object-assign "^4.1.0"
     read-pkg-up "^1.0.1"
     require-main-filename "^1.0.1"
+
+test-listen@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/test-listen/-/test-listen-1.1.0.tgz#2ba614d96c3bc9157469003027b42a495dd83b6a"
+  integrity sha512-OyEVi981C1sb9NX1xayfgZls3p8QTDRwp06EcgxSgd1kktaENBW8dO15i8v/7Fi15j0IYQctJzk5J+hyEBId2w==
 
 throat@^4.0.0:
   version "4.1.0"
