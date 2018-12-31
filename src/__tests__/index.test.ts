@@ -1,16 +1,24 @@
 import micro from 'micro';
-import listen from 'test-listen';
 import axios from 'axios';
+import listen from 'test-listen';
 import run from '../index';
 
 describe('App', () => {
-  it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
-    const endpoint = await listen(micro(run));
-    const response = await axios.post(endpoint, null, {
+  const request = ({ endpoint = '', body = {}, headers = {} }) =>
+    axios.post(endpoint, body, { headers });
+
+  const requestWithIssuesEvent = ({ headers = {}, ...rest }) =>
+    request({
+      ...rest,
       headers: {
-        'X-Github-Delivery': 'XXXX-XXXX-XXXX-XXXX',
+        'X-GitHub-Event': 'issues',
+        ...headers,
       },
     });
+
+  it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
+    const endpoint = await listen(micro(run));
+    const response = await request({ endpoint });
 
     expect(response.status).toBe(202);
     expect(response.data).toMatchInlineSnapshot(
@@ -20,9 +28,9 @@ describe('App', () => {
 
   it('expect to return 202 with the `X-GitHub-Event` header different than `issues`', async () => {
     const endpoint = await listen(micro(run));
-    const response = await axios.post(endpoint, null, {
+    const response = await request({
+      endpoint,
       headers: {
-        'X-Github-Delivery': 'XXXX-XXXX-XXXX-XXXX',
         'X-GitHub-Event': 'membership',
       },
     });
@@ -37,18 +45,12 @@ describe('App', () => {
     const endpoint = await listen(micro(run));
 
     {
-      const response = await axios.post(
+      const response = await requestWithIssuesEvent({
         endpoint,
-        {
+        body: {
           action: 'deleted',
         },
-        {
-          headers: {
-            'X-Github-Delivery': 'XXXX-XXXX-XXXX-XXXX',
-            'X-GitHub-Event': 'issues',
-          },
-        }
-      );
+      });
 
       expect(response.status).toBe(202);
       expect(response.data).toMatchInlineSnapshot(
@@ -57,18 +59,12 @@ describe('App', () => {
     }
 
     {
-      const response = await axios.post(
+      const response = await requestWithIssuesEvent({
         endpoint,
-        {
+        body: {
           action: 'edited',
         },
-        {
-          headers: {
-            'X-Github-Delivery': 'XXXX-XXXX-XXXX-XXXX',
-            'X-GitHub-Event': 'issues',
-          },
-        }
-      );
+      });
 
       expect(response.status).toBe(202);
       expect(response.data).toMatchInlineSnapshot(
