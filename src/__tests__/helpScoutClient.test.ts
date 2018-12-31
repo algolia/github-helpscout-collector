@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { createHelpScoutClient } from '../helpScout';
+import { createHelpScoutClient } from '../helpScoutClient';
 
 const helpScoutNock = nock('https://api.helpscout.net/v2');
 
