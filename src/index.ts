@@ -22,8 +22,8 @@ const run: RequestHandler = async (req, res) => {
 
   const body = (await json(req)) as IssueEventPayload;
 
-  if (body.action !== 'created') {
-    return send(res, 202, 'Only the action `created` is supported by the hook');
+  if (body.action !== 'opened') {
+    return send(res, 202, 'Only the action `opened` is supported by the hook');
   }
 
   const database = await mount(databasePath);

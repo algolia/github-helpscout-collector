@@ -58,7 +58,7 @@ describe('App', () => {
     }
   });
 
-  it('expect to return a 202 with an `action` different than `created`', async () => {
+  it('expect to return a 202 with an `action` different than `opened`', async () => {
     const endpoint = await listen(micro(run));
 
     {
@@ -71,7 +71,7 @@ describe('App', () => {
 
       expect(response.status).toBe(202);
       expect(response.data).toMatchInlineSnapshot(
-        `"Only the action \`created\` is supported by the hook"`
+        `"Only the action \`opened\` is supported by the hook"`
       );
     }
 
@@ -85,7 +85,7 @@ describe('App', () => {
 
       expect(response.status).toBe(202);
       expect(response.data).toMatchInlineSnapshot(
-        `"Only the action \`created\` is supported by the hook"`
+        `"Only the action \`opened\` is supported by the hook"`
       );
     }
   });
@@ -95,7 +95,7 @@ describe('App', () => {
     const response = await requestWithIssuesEvent({
       endpoint,
       body: {
-        action: 'created',
+        action: 'opened',
         repository: {
           id: 12345,
         },
