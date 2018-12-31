@@ -2,7 +2,7 @@ import micro from 'micro';
 import axios from 'axios';
 import listen from 'test-listen';
 import { createHelpScoutClient } from '../helpScoutClient';
-import run from '../index';
+import run from '../run';
 
 jest.mock('../helpScoutClient', () => ({
   createHelpScoutClient: jest.fn(),

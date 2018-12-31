@@ -2,7 +2,7 @@
   "name": "link-github-helpscout",
   "version": "1.0.0",
   "description": "Push GitHub issues to HelpScout",
-  "main": "dist/index.js",
+  "main": "dist/run.js",
   "author": "Vaillant Samuel <samuel.vllnt@gmail.com>",
   "license": "MIT",
   "scripts": {
