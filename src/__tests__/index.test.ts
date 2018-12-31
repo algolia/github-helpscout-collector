@@ -26,7 +26,7 @@ describe('App', () => {
     );
   });
 
-  it('expect to return 202 with the `X-GitHub-Event` header different than `issues`', async () => {
+  it('expect to return a 202 with the `X-GitHub-Event` header different than `issues`', async () => {
     const endpoint = await listen(micro(run));
 
     {
@@ -88,5 +88,23 @@ describe('App', () => {
         `"Only the action \`created\` is supported by the hook"`
       );
     }
+  });
+
+  it('expect to return a 202 for a repo that does not exist', async () => {
+    const endpoint = await listen(micro(run));
+    const response = await requestWithIssuesEvent({
+      endpoint,
+      body: {
+        action: 'created',
+        repository: {
+          id: 12345,
+        },
+      },
+    });
+
+    expect(response.status).toBe(202);
+    expect(response.data).toMatchInlineSnapshot(
+      `"The hook does not support the repo: \\"12345\\""`
+    );
   });
 });
