@@ -22,17 +22,21 @@ describe('App', () => {
     });
 
   it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
-    const endpoint = await listen(micro(run));
+    const service = micro(run);
+    const endpoint = await listen(service);
     const response = await request({ endpoint });
 
     expect(response.status).toBe(202);
     expect(response.data).toMatchInlineSnapshot(
       `"Only the event \`issues\` is supported by the hook"`
     );
+
+    service.close();
   });
 
   it('expect to return a 202 with the `X-GitHub-Event` header different than `issues`', async () => {
-    const endpoint = await listen(micro(run));
+    const service = micro(run);
+    const endpoint = await listen(service);
 
     {
       const response = await request({
@@ -61,10 +65,13 @@ describe('App', () => {
         `"Only the event \`issues\` is supported by the hook"`
       );
     }
+
+    service.close();
   });
 
   it('expect to return a 202 with an `action` different than `opened`', async () => {
-    const endpoint = await listen(micro(run));
+    const service = micro(run);
+    const endpoint = await listen(service);
 
     {
       const response = await requestWithIssuesEvent({
@@ -93,10 +100,13 @@ describe('App', () => {
         `"Only the action \`opened\` is supported by the hook"`
       );
     }
+
+    service.close();
   });
 
   it('expect to return a 202 for a repo that does not exist', async () => {
-    const endpoint = await listen(micro(run));
+    const service = micro(run);
+    const endpoint = await listen(service);
     const response = await requestWithIssuesEvent({
       endpoint,
       body: {
@@ -111,6 +121,8 @@ describe('App', () => {
     expect(response.data).toMatchInlineSnapshot(
       `"The hook does not support the repo: \\"12345\\""`
     );
+
+    service.close();
   });
 
   it('expect to return a 201 that creates a HelpScout conversation', async () => {
@@ -129,7 +141,8 @@ describe('App', () => {
       createCustomerConversation,
     }));
 
-    const endpoint = await listen(micro(run));
+    const service = micro(run);
+    const endpoint = await listen(service);
 
     const response = await requestWithIssuesEvent({
       endpoint,
@@ -180,5 +193,7 @@ describe('App', () => {
 
     expect(response.status).toBe(201);
     expect(response.data).toMatchInlineSnapshot(`"The GitHub issue has been pushed to HelpScout"`);
+
+    service.close();
   });
 });
