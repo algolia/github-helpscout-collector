@@ -1,7 +1,12 @@
 import micro from 'micro';
 import axios from 'axios';
 import listen from 'test-listen';
+import { createHelpScoutClient } from '../helpScoutClient';
 import run from '../index';
+
+jest.mock('../helpScoutClient', () => ({
+  createHelpScoutClient: jest.fn(),
+}));
 
 describe('App', () => {
   const request = ({ endpoint = '', body = {}, headers = {} }) =>
@@ -106,5 +111,74 @@ describe('App', () => {
     expect(response.data).toMatchInlineSnapshot(
       `"The hook does not support the repo: \\"12345\\""`
     );
+  });
+
+  it('expect to return a 201 that creates a HelpScout conversation', async () => {
+    const getAccessToken = jest.fn(() =>
+      Promise.resolve({
+        data: {
+          access_token: 'YOUR_ACCESS_TOKEN',
+        },
+      })
+    );
+
+    const createCustomerConversation = jest.fn(() => Promise.resolve());
+
+    (createHelpScoutClient as jest.Mock).mockImplementation(() => ({
+      getAccessToken,
+      createCustomerConversation,
+    }));
+
+    const endpoint = await listen(micro(run));
+
+    const response = await requestWithIssuesEvent({
+      endpoint,
+      body: {
+        action: 'opened',
+        issue: {
+          title: 'Spelling error in the README file',
+          html_url: 'https://github.com/Codertocat/Hello-World/issues/2',
+          body: "It looks like you accidently spelled 'commit' with two 't's.",
+        },
+        repository: {
+          id: 67891,
+        },
+      },
+    });
+
+    expect(getAccessToken).toHaveBeenCalledTimes(1);
+    expect(createCustomerConversation).toHaveBeenCalledTimes(1);
+    expect(createCustomerConversation).toHaveBeenCalledWith({
+      accessToken: 'YOUR_ACCESS_TOKEN',
+      conversation: expect.objectContaining({
+        subject: 'Spelling error in the README file',
+        mailboxId: 15,
+        customer: {
+          email: 'support+github@algolia.com',
+        },
+        tags: ['github'],
+      }),
+    });
+
+    expect(createCustomerConversation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conversation: expect.objectContaining({
+          text: expect.stringContaining(
+            "It looks like you accidently spelled 'commit' with two 't's."
+          ),
+        }),
+      })
+    );
+
+    expect(createCustomerConversation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        conversation: expect.objectContaining({
+          text: expect.stringContaining('https://github.com/Codertocat/Hello-World/issues/2'),
+        }),
+      })
+    );
+
+    expect(response.status).toBe(201);
+    expect(response.data).toMatchInlineSnapshot(`"The GitHub issue has been pushed to HelpScout"`);
   });
 });

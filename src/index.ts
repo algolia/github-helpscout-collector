@@ -2,12 +2,22 @@ import { join } from 'path';
 import { RequestHandler, send, json } from 'micro';
 import { mount } from './database';
 import { findMailboxId } from './findMailboxId';
+import { createHelpScoutClient } from './helpScoutClient';
+import { formatText } from './helpScoutTemplate';
 
 const databasePath =
   process.env.DATABASE_PATH || join(__dirname, '..', 'databases', 'data.test.json');
 
+const helpScoutAppId = process.env.HELP_SCOUT_APP_ID || '';
+const helpScoutAppSecret = process.env.HELP_SCOUT_APP_SECRET || '';
+
 type IssueEventPayload = {
   action: string;
+  issue: {
+    title: string;
+    html_url: string;
+    body: string;
+  };
   repository: {
     id: number;
   };
@@ -34,7 +44,30 @@ const run: RequestHandler = async (req, res) => {
     return send(res, 202, `The hook does not support the repo: "${body.repository.id}"`);
   }
 
-  return send(res, 201);
+  const helpScoutClient = createHelpScoutClient({
+    appId: helpScoutAppId,
+    appSecret: helpScoutAppSecret,
+  });
+
+  const { data: reponseAccessToken } = await helpScoutClient.getAccessToken();
+
+  await helpScoutClient.createCustomerConversation({
+    accessToken: reponseAccessToken.access_token,
+    conversation: {
+      mailboxId,
+      subject: body.issue.title,
+      customer: {
+        email: 'support+github@algolia.com',
+      },
+      text: formatText({
+        content: body.issue.body,
+        link: body.issue.html_url,
+      }),
+      tags: ['github'],
+    },
+  });
+
+  return send(res, 201, 'The GitHub issue has been pushed to HelpScout');
 };
 
 export default run;
