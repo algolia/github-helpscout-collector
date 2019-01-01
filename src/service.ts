@@ -28,7 +28,7 @@ type IssueEventPayload = {
   };
 };
 
-const run: RequestHandler = async (req, res) => {
+const service: RequestHandler = async (req, res) => {
   const githubEventTypeHeader = req.headers['x-github-event'];
 
   if (!githubEventTypeHeader || githubEventTypeHeader !== 'issues') {
@@ -75,4 +75,4 @@ const run: RequestHandler = async (req, res) => {
   return send(res, 201, 'The GitHub issue has been pushed to HelpScout');
 };
 
-export default run;
+export default service;

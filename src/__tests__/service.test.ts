@@ -2,13 +2,13 @@ import micro from 'micro';
 import axios from 'axios';
 import listen from 'test-listen';
 import { createHelpScoutClient } from '../helpScoutClient';
-import run from '../run';
+import service from '../service';
 
 jest.mock('../helpScoutClient', () => ({
   createHelpScoutClient: jest.fn(),
 }));
 
-describe('App', () => {
+describe('service', () => {
   const request = ({ endpoint = '', body = {}, headers = {} }) =>
     axios.post(endpoint, body, { headers });
 
@@ -22,8 +22,8 @@ describe('App', () => {
     });
 
   it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
-    const service = micro(run);
-    const endpoint = await listen(service);
+    const server = micro(service);
+    const endpoint = await listen(server);
     const response = await request({ endpoint });
 
     expect(response.status).toBe(202);
@@ -31,12 +31,12 @@ describe('App', () => {
       `"Only the event \`issues\` is supported by the hook"`
     );
 
-    service.close();
+    server.close();
   });
 
   it('expect to return a 202 with the `X-GitHub-Event` header different than `issues`', async () => {
-    const service = micro(run);
-    const endpoint = await listen(service);
+    const server = micro(service);
+    const endpoint = await listen(server);
 
     {
       const response = await request({
@@ -66,12 +66,12 @@ describe('App', () => {
       );
     }
 
-    service.close();
+    server.close();
   });
 
   it('expect to return a 202 with an `action` different than `opened`', async () => {
-    const service = micro(run);
-    const endpoint = await listen(service);
+    const server = micro(service);
+    const endpoint = await listen(server);
 
     {
       const response = await requestWithIssuesEvent({
@@ -101,12 +101,12 @@ describe('App', () => {
       );
     }
 
-    service.close();
+    server.close();
   });
 
   it('expect to return a 202 for a repo that does not exist', async () => {
-    const service = micro(run);
-    const endpoint = await listen(service);
+    const server = micro(service);
+    const endpoint = await listen(server);
     const response = await requestWithIssuesEvent({
       endpoint,
       body: {
@@ -122,7 +122,7 @@ describe('App', () => {
       `"The hook does not support the repo: \\"12345\\""`
     );
 
-    service.close();
+    server.close();
   });
 
   it('expect to return a 201 that creates a HelpScout conversation', async () => {
@@ -141,8 +141,8 @@ describe('App', () => {
       createCustomerConversation,
     }));
 
-    const service = micro(run);
-    const endpoint = await listen(service);
+    const server = micro(service);
+    const endpoint = await listen(server);
 
     const response = await requestWithIssuesEvent({
       endpoint,
@@ -192,6 +192,6 @@ describe('App', () => {
     expect(response.status).toBe(201);
     expect(response.data).toMatchInlineSnapshot(`"The GitHub issue has been pushed to HelpScout"`);
 
-    service.close();
+    server.close();
   });
 });
