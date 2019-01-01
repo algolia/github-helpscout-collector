@@ -151,7 +151,7 @@ describe('App', () => {
         issue: {
           title: 'Spelling error in the README file',
           html_url: 'https://github.com/Codertocat/Hello-World/issues/2',
-          body: "It looks like you accidently spelled 'commit' with two 't's.",
+          body: 'It looks like you accidently spelled commit with two t.',
         },
         repository: {
           id: 67891,
@@ -176,9 +176,7 @@ describe('App', () => {
     expect(createCustomerConversation).toHaveBeenCalledWith(
       expect.objectContaining({
         conversation: expect.objectContaining({
-          text: expect.stringContaining(
-            "It looks like you accidently spelled 'commit' with two 't's."
-          ),
+          text: expect.stringContaining('It looks like you accidently spelled commit with two t.'),
         }),
       })
     );

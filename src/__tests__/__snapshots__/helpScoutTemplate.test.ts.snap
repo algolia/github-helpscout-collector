@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`helpScoutTemplate formatText expect to return HTML from MD 1`] = `
+"<h1 id=\\"hello\\">Hello</h1>
+<p>This is a test with Markdown.</p>
+<pre><code class=\\"language-jsx\\">const App = () =&gt; (
+  &lt;View&gt;This is the content of the example.&lt;/View&gt;
+)</code></pre>
+<br />
+-----------------------------------------------------------
+<br />
+<h3 style=\\"color: #FF4F81;\\">
+👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈
+</h3>
+<a href=\\"https://link.github.com\\">https://link.github.com</a>
+<br/>
+-----------------------------------------------------------"
+`;
+
+exports[`helpScoutTemplate formatText expect to return escaped HTML from MD 1`] = `
+"<h1 id=\\"hello\\">Hello</h1>
+<p>This is a test with Markdown.</p>
+<p>&lt;script&gt;
+  console.log('malicious');
+&lt;/script&gt;
+
+</p>
+<pre><code class=\\"language-jsx\\">const App = () =&gt; (
+  &lt;View&gt;This is the content of the example.&lt;/View&gt;
+)</code></pre>
+<br />
+-----------------------------------------------------------
+<br />
+<h3 style=\\"color: #FF4F81;\\">
+👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈
+</h3>
+<a href=\\"https://link.github.com\\">https://link.github.com</a>
+<br/>
+-----------------------------------------------------------"
+`;
+
+exports[`helpScoutTemplate formatText expect to return the content with a footer 1`] = `
+"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla metus mi, condimentum eget
+convallis quis, tempus a neque. Donec sit amet egestas libero. Praesent tempus magna libero
+in semper nibh euismod vel. Pellentesque ultricies eu lorem id ultrices. Pellentesque
+ultricies rhoncus turpis, ut rutrum nibh aliquet sit amet.</p>
+<br />
+-----------------------------------------------------------
+<br />
+<h3 style=\\"color: #FF4F81;\\">
+👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈
+</h3>
+<a href=\\"https://link.github.com\\">https://link.github.com</a>
+<br/>
+-----------------------------------------------------------"
+`;
