@@ -1,15 +1,20 @@
 import { join } from 'path';
+import { existsSync } from 'fs';
 import { RequestHandler, send, json } from 'micro';
 import { mount } from './database';
 import { findMailboxId } from './findMailboxId';
 import { createHelpScoutClient } from './helpScoutClient';
 import { formatText } from './helpScoutTemplate';
 
-const databasePath =
-  process.env.DATABASE_PATH || join(__dirname, '..', 'databases', 'data.test.json');
-
 const helpScoutAppId = process.env.HELP_SCOUT_APP_ID || '';
 const helpScoutAppSecret = process.env.HELP_SCOUT_APP_SECRET || '';
+
+const databaseName = process.env.DATABASE_NAME || 'data.test.json';
+const databasePath = join(__dirname, '..', 'databases', databaseName);
+
+if (!existsSync(databasePath)) {
+  throw new Error(`The database "${databaseName}" does not exist, please create it.`);
+}
 
 type IssueEventPayload = {
   action: string;
