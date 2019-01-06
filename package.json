@@ -1,6 +1,6 @@
 {
-  "name": "link-github-helpscout",
-  "version": "1.0.0",
+  "name": "github-webhook-collector",
+  "private": true,
   "description": "Push GitHub issues to HelpScout",
   "main": "dist/service.js",
   "author": "Vaillant Samuel <samuel.vllnt@gmail.com>",
