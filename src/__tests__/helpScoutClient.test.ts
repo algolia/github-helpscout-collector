@@ -42,13 +42,13 @@ describe('helpScout', () => {
           mailboxId: 85,
           status: 'active',
           customer: {
-            email: 'link-github-helpscout@algolia.com',
+            email: 'support+github@algolia.com',
           },
           threads: [
             {
               type: 'customer',
               customer: {
-                email: 'link-github-helpscout@algolia.com',
+                email: 'support+github@algolia.com',
               },
               text: 'Hello, Help Scout. How are you?',
             },
@@ -77,7 +77,7 @@ describe('helpScout', () => {
           subject: 'Subject',
           mailboxId: 85,
           customer: {
-            email: 'link-github-helpscout@algolia.com',
+            email: 'support+github@algolia.com',
           },
           text: 'Hello, Help Scout. How are you?',
           tags: ['github'],
