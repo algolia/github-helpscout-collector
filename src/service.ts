@@ -1,10 +1,13 @@
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { RequestHandler, createError, send, json } from 'micro';
+import { RequestHandler, createError, text, json, send } from 'micro';
+import { validateGithubSignature } from './githubSignature';
 import { mount } from './database';
 import { findMailboxId } from './findMailboxId';
 import { createHelpScoutClient } from './helpScoutClient';
 import { formatText } from './helpScoutTemplate';
+
+const githubWebhookSecret = process.env.GITHUB_WEBHOOK_SECRET || 'mySuperSecretToken';
 
 const helpScoutAppId = process.env.HELP_SCOUT_APP_ID || '';
 const helpScoutAppSecret = process.env.HELP_SCOUT_APP_SECRET || '';
@@ -31,6 +34,16 @@ type IssueEventPayload = {
 const service: RequestHandler = async (req, res) => {
   if (!req.method || req.method !== 'POST') {
     throw createError(405, 'Only `POST` requests are allowed on this endpoint');
+  }
+
+  const [isValidGithubSignature] = validateGithubSignature({
+    secret: githubWebhookSecret,
+    headers: req.headers,
+    payload: await text(req),
+  });
+
+  if (!isValidGithubSignature) {
+    throw createError(401, 'Only GitHub requests are allowed on this endpoint');
   }
 
   const githubEventTypeHeader = req.headers['x-github-event'];

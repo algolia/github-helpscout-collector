@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import micro from 'micro';
 import axios from 'axios';
 import listen from 'test-listen';
@@ -9,6 +10,15 @@ jest.mock('../helpScoutClient', () => ({
 }));
 
 describe('service', () => {
+  const createGithubSignature = ({ secrect, payload }: { secrect: string; payload: string }) => {
+    const digest = crypto
+      .createHmac('sha1', secrect)
+      .update(payload)
+      .digest('hex');
+
+    return `sha1=${digest}`;
+  };
+
   const request = ({ endpoint = '', method = 'POST', body = {}, headers = {} }) =>
     axios(endpoint, {
       data: body,
@@ -16,8 +26,22 @@ describe('service', () => {
       headers,
     });
 
+  const requestWithGithubSignature = ({ body = {}, headers = {}, ...rest }) => {
+    return request({
+      ...rest,
+      headers: {
+        ...headers,
+        'X-Hub-Signature': createGithubSignature({
+          secrect: 'mySuperSecretToken',
+          payload: JSON.stringify(body),
+        }),
+      },
+      body,
+    });
+  };
+
   const requestWithIssuesEvent = ({ headers = {}, ...rest }) =>
-    request({
+    requestWithGithubSignature({
       ...rest,
       headers: {
         'X-GitHub-Event': 'issues',
@@ -61,10 +85,28 @@ describe('service', () => {
     server.close();
   });
 
+  it('expext to return a 401 with a signature that is not valid', async () => {
+    expect.assertions(2);
+
+    const server = micro(service);
+    const endpoint = await listen(server);
+
+    try {
+      await request({ endpoint });
+    } catch ({ response }) {
+      expect(response.status).toBe(401);
+      expect(response.data).toMatchInlineSnapshot(
+        `"Only GitHub requests are allowed on this endpoint"`
+      );
+    }
+
+    server.close();
+  });
+
   it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
     const server = micro(service);
     const endpoint = await listen(server);
-    const response = await request({ endpoint });
+    const response = await requestWithGithubSignature({ endpoint });
 
     expect(response.status).toBe(202);
     expect(response.data).toMatchInlineSnapshot(
@@ -79,7 +121,7 @@ describe('service', () => {
     const endpoint = await listen(server);
 
     {
-      const response = await request({
+      const response = await requestWithGithubSignature({
         endpoint,
         headers: {
           'X-GitHub-Event': 'membership',
@@ -93,7 +135,7 @@ describe('service', () => {
     }
 
     {
-      const response = await request({
+      const response = await requestWithGithubSignature({
         endpoint,
         headers: {
           'X-GitHub-Event': 'issue_comment',
