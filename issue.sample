@@ -1,0 +1,13 @@
+This is the content of the test.
+
+With a new line to see how it renders in HelpScout.
+
+```jsx
+const App = () => (
+  <View>Hello from the snippet of the example.</View>
+);
+```
+
+<br />
+
+<script>console.log('Hello from the script element')</script>
