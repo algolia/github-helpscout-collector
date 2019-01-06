@@ -9,8 +9,12 @@ jest.mock('../helpScoutClient', () => ({
 }));
 
 describe('service', () => {
-  const request = ({ endpoint = '', body = {}, headers = {} }) =>
-    axios.post(endpoint, body, { headers });
+  const request = ({ endpoint = '', method = 'POST', body = {}, headers = {} }) =>
+    axios(endpoint, {
+      data: body,
+      method,
+      headers,
+    });
 
   const requestWithIssuesEvent = ({ headers = {}, ...rest }) =>
     request({
@@ -20,6 +24,42 @@ describe('service', () => {
         ...headers,
       },
     });
+
+  it('expext to return a 405 with a method different than `POST`', async () => {
+    expect.assertions(6);
+
+    const server = micro(service);
+    const endpoint = await listen(server);
+
+    try {
+      await request({ endpoint, method: 'GET' });
+    } catch ({ response }) {
+      expect(response.status).toBe(405);
+      expect(response.data).toMatchInlineSnapshot(
+        `"Only \`POST\` requests are allowed on this endpoint"`
+      );
+    }
+
+    try {
+      await request({ endpoint, method: 'PUT' });
+    } catch ({ response }) {
+      expect(response.status).toBe(405);
+      expect(response.data).toMatchInlineSnapshot(
+        `"Only \`POST\` requests are allowed on this endpoint"`
+      );
+    }
+
+    try {
+      await request({ endpoint, method: 'DELETE' });
+    } catch ({ response }) {
+      expect(response.status).toBe(405);
+      expect(response.data).toMatchInlineSnapshot(
+        `"Only \`POST\` requests are allowed on this endpoint"`
+      );
+    }
+
+    server.close();
+  });
 
   it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
     const server = micro(service);

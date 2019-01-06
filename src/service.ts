@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { RequestHandler, send, json } from 'micro';
+import { RequestHandler, createError, send, json } from 'micro';
 import { mount } from './database';
 import { findMailboxId } from './findMailboxId';
 import { createHelpScoutClient } from './helpScoutClient';
@@ -29,6 +29,10 @@ type IssueEventPayload = {
 };
 
 const service: RequestHandler = async (req, res) => {
+  if (!req.method || req.method !== 'POST') {
+    throw createError(405, 'Only `POST` requests are allowed on this endpoint');
+  }
+
   const githubEventTypeHeader = req.headers['x-github-event'];
 
   if (!githubEventTypeHeader || githubEventTypeHeader !== 'issues') {
