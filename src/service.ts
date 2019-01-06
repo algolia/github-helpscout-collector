@@ -1,5 +1,4 @@
 import { join } from 'path';
-import { existsSync } from 'fs';
 import { RequestHandler, createError, text, json, send } from 'micro';
 import { validateGithubSignature } from './githubSignature';
 import { mount } from './database';
@@ -11,13 +10,6 @@ const githubWebhookSecret = process.env.GITHUB_WEBHOOK_SECRET || 'mySuperSecretT
 
 const helpScoutAppId = process.env.HELP_SCOUT_APP_ID || '';
 const helpScoutAppSecret = process.env.HELP_SCOUT_APP_SECRET || '';
-
-const databaseName = process.env.DATABASE_NAME || 'data.test.json';
-const databasePath = join(__dirname, '..', 'databases', databaseName);
-
-if (!existsSync(databasePath)) {
-  throw new Error(`The database "${databaseName}" does not exist, please create it.`);
-}
 
 type IssueEventPayload = {
   action: string;
@@ -58,7 +50,7 @@ const service: RequestHandler = async (req, res) => {
     return send(res, 202, 'Only the action `opened` is supported by the hook');
   }
 
-  const database = await mount(databasePath);
+  const database = await mount(join(__dirname, '..', 'data.json'));
 
   const mailboxId = findMailboxId(database, body.repository.id);
 

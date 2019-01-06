@@ -236,7 +236,7 @@ describe('service', () => {
           body: 'It looks like you accidently spelled commit with two t.',
         },
         repository: {
-          id: 67891,
+          id: 163651661,
         },
       },
     });
@@ -247,7 +247,7 @@ describe('service', () => {
       accessToken: 'YOUR_ACCESS_TOKEN',
       conversation: expect.objectContaining({
         subject: 'Spelling error in the README file',
-        mailboxId: 15,
+        mailboxId: 89660,
         customer: {
           email: 'support+github@algolia.com',
         },
