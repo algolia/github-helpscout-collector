@@ -1,0 +1,11 @@
+{
+  "data": [
+    [
+      <mailboxId>,
+      [
+        <repoId>,
+        <repoId>,
+      ]
+    ]
+  ]
+}
