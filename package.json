@@ -1,5 +1,5 @@
 {
-  "name": "github-webhook-collector",
+  "name": "github-helpscout-collector",
   "private": true,
   "description": "Push GitHub issues to HelpScout",
   "main": "dist/service.js",
