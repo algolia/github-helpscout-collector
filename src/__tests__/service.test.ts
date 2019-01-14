@@ -50,7 +50,7 @@ describe('service', () => {
     });
 
   it('expext to return a 405 with a method different than `POST`', async () => {
-    expect.assertions(6);
+    expect.assertions(9);
 
     const server = micro(service);
     const endpoint = await listen(server);
@@ -59,6 +59,7 @@ describe('service', () => {
       await request({ endpoint, method: 'GET' });
     } catch ({ response }) {
       expect(response.status).toBe(405);
+      expect(response.headers.allow).toBe('POST');
       expect(response.data).toMatchInlineSnapshot(
         `"Only \`POST\` requests are allowed on this endpoint"`
       );
@@ -68,6 +69,7 @@ describe('service', () => {
       await request({ endpoint, method: 'PUT' });
     } catch ({ response }) {
       expect(response.status).toBe(405);
+      expect(response.headers.allow).toBe('POST');
       expect(response.data).toMatchInlineSnapshot(
         `"Only \`POST\` requests are allowed on this endpoint"`
       );
@@ -77,6 +79,7 @@ describe('service', () => {
       await request({ endpoint, method: 'DELETE' });
     } catch ({ response }) {
       expect(response.status).toBe(405);
+      expect(response.headers.allow).toBe('POST');
       expect(response.data).toMatchInlineSnapshot(
         `"Only \`POST\` requests are allowed on this endpoint"`
       );

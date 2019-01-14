@@ -33,6 +33,8 @@ type IssueEventPayload = {
 
 const service: RequestHandler = async (req, res) => {
   if (!req.method || req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+
     throw createError(405, 'Only `POST` requests are allowed on this endpoint');
   }
 
