@@ -6,7 +6,7 @@
   "author": "Vaillant Samuel <samuel.vllnt@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "micro",
+    "start": "micro -l tcp://0.0.0.0:$PORT",
     "dev": "micro-dev",
     "clean": "rm -rf dist",
     "build": "yarn tsc",
