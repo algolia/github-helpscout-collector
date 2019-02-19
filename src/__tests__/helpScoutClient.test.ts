@@ -33,6 +33,50 @@ describe('helpScout', () => {
     });
   });
 
+  describe('getMailboxes', () => {
+    it('expect to return a list of mailbox', async () => {
+      helpScoutNock.get('/mailboxes').reply(() => {
+        return [
+          200,
+          {
+            _embedded: {
+              mailboxes: [
+                {
+                  name: 'Mailbox A',
+                },
+                {
+                  name: 'Mailbox B',
+                },
+              ],
+            },
+          },
+        ];
+      });
+
+      const client = createHelpScoutClient({
+        appId: 'YOUR_APP_ID',
+        appSecret: 'YOUR_APP_SECRET',
+      });
+
+      const response = await client.getMailboxes({
+        accessToken: 'YOUR_ACCESS_TOKEN',
+      });
+
+      expect(response.data).toEqual({
+        _embedded: {
+          mailboxes: [
+            {
+              name: 'Mailbox A',
+            },
+            {
+              name: 'Mailbox B',
+            },
+          ],
+        },
+      });
+    });
+  });
+
   describe('createCustomerConversation', () => {
     it('expect to create a customer converstation', async () => {
       helpScoutNock

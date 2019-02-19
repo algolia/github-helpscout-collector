@@ -1,5 +1,14 @@
 import axios, { AxiosResponse } from 'axios';
 
+type Mailbox = {
+  id: number;
+  name: string;
+  slug: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 type HScoutClientOptions = {
   appId: string;
   appSecret: string;
@@ -9,8 +18,8 @@ type HScoutResponse<T> = Promise<AxiosResponse<T>>;
 
 type HScoutRequestOptions = {
   endpoint: string;
-  method: 'POST';
-  body: any;
+  method: 'GET' | 'POST';
+  body?: any;
   headers?: {
     [key: string]: string;
   };
@@ -20,6 +29,16 @@ type HScoutAccessTokenReponse = {
   token_type: 'bearer';
   access_token: string;
   expires_in: number;
+};
+
+type HScoutMailboxesOptions = {
+  accessToken: string;
+};
+
+type HScoutMailboxesReponse = {
+  _embedded: {
+    mailboxes: Mailbox[];
+  };
 };
 
 type HScoutCustomerConversationOptions = {
@@ -40,11 +59,15 @@ type HScoutCustomerConversationOptions = {
 export const createHelpScoutClient = (clientOptions: HScoutClientOptions) => {
   const request: <T>(options: HScoutRequestOptions) => HScoutResponse<T> = ({
     endpoint,
+    method,
     body,
     headers = {},
   }) =>
-    axios.post(`https://api.helpscout.net/v2${endpoint}`, body, {
+    axios.request({
+      url: `https://api.helpscout.net/v2${endpoint}`,
+      data: body,
       headers,
+      method,
     });
 
   return {
@@ -56,6 +79,18 @@ export const createHelpScoutClient = (clientOptions: HScoutClientOptions) => {
           grant_type: 'client_credentials',
           client_id: clientOptions.appId,
           client_secret: clientOptions.appSecret,
+        },
+      });
+    },
+
+    getMailboxes(options: HScoutMailboxesOptions): HScoutResponse<HScoutMailboxesReponse> {
+      const { accessToken } = options;
+
+      return request<HScoutMailboxesReponse>({
+        endpoint: '/mailboxes',
+        method: 'GET',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
         },
       });
     },
