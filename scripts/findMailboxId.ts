@@ -43,8 +43,18 @@ inquirer
       mailbox.name.toLowerCase().includes(helpScoutMailboxName)
     );
 
+    if (mailboxes.length) {
+      console.log();
+      mailboxes.forEach(mailbox => {
+        console.log(`📬 ${chalk.bold(mailbox.name)}: ${chalk.cyan(mailbox.id.toString())}`);
+      });
+      console.log();
+
+      return;
+    }
+
     console.log();
-    mailboxes.forEach(mailbox => {
+    responseMailboxes._embedded.mailboxes.forEach(mailbox => {
       console.log(`📬 ${chalk.bold(mailbox.name)}: ${chalk.cyan(mailbox.id.toString())}`);
     });
     console.log();
