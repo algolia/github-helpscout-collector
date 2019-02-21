@@ -11,7 +11,15 @@ This is a server to collect `issues` events from GitHub through [webhooks](https
         "<repoId>",
         "<repoId>"
       ]
-    ]
+    ],
+    [
+      "<mailboxId>",
+      [
+        "<repoId>",
+        "<repoId>"
+      ]
+    ],
+    ...
   ]
 }
 ```
