@@ -64,7 +64,7 @@ const service: RequestHandler = async (req, res) => {
 
   const mailbox = findMailbox(database, body.repository.id);
 
-  if (mailbox === null) {
+  if (!mailbox) {
     return send(res, 202, `The hook does not support the repo: "${body.repository.id}"`);
   }
 
