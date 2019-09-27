@@ -2,42 +2,21 @@ import { Db } from '../database';
 import { findMailbox } from '../findMailbox';
 
 describe('findMailbox', () => {
-  it('expect the mailboxId to be a number when it exist', () => {
+  it('expect to return a mailbox with a `repoId` that match', () => {
     const repoId = 20;
     const database: Db = {
       data: [{ mailboxId: 15, repositories: [20, 21] }],
     };
 
-    const expectation = 15;
     const actual = findMailbox(database, repoId);
 
-    expect(actual!.mailboxId).toBe(expectation);
+    expect(actual).toEqual({
+      mailboxId: 15,
+      repositories: [20, 21],
+    });
   });
 
-  it('expect the assignTo to be undefined when it exist (but empty)', () => {
-    const repoId = 20;
-    const database: Db = {
-      data: [{ mailboxId: 15, repositories: [20, 21] }],
-    };
-
-    const expectation = undefined;
-    const actual = findMailbox(database, repoId);
-
-    expect(actual!.assignTo).toBe(expectation);
-  });
-
-  it('expect the assignTo to be a number when it exist', () => {
-    const repoId = 20;
-    const database: Db = {
-      data: [{ mailboxId: 15, assignTo: 420, repositories: [20, 21] }],
-    };
-
-    const actual = findMailbox(database, repoId);
-
-    expect(actual!.assignTo).toBe(420);
-  });
-
-  it('expect the response to be null when it does not exist', () => {
+  it("expect to return `null` with a `repoId` that doesn't match", () => {
     const repoId = 100;
     const database: Db = {
       data: [{ mailboxId: 15, repositories: [20, 21] }],
@@ -48,15 +27,14 @@ describe('findMailbox', () => {
     expect(actual).toBe(null);
   });
 
-  it('expect the mailboxId to be null when database is empty', () => {
+  it('expect to return `null` with data empty', () => {
     const repoId = 100;
     const database: Db = {
       data: [],
     };
 
-    const expectation = null;
     const actual = findMailbox(database, repoId);
 
-    expect(actual).toBe(expectation);
+    expect(actual).toBe(null);
   });
 });
