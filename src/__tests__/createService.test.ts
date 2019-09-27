@@ -2,14 +2,30 @@ import crypto from 'crypto';
 import micro from 'micro';
 import axios from 'axios';
 import listen from 'test-listen';
-import { createHelpScoutClient } from '../helpScoutClient';
-import service from '../service';
-
-jest.mock('../helpScoutClient', () => ({
-  createHelpScoutClient: jest.fn(),
-}));
+import { HelpScoutClient } from '../helpScoutClient';
+import { createService, ServiceConfiguration } from '../createService';
 
 describe('service', () => {
+  const createHelpScoutClient = (): HelpScoutClient => ({
+    createCustomerConversation: jest.fn(),
+    getAccessToken: jest.fn(),
+    getMailboxes: jest.fn(),
+    getTeams: jest.fn(),
+  });
+
+  const createTestService = ({
+    githubWebhookSecret = 'mySuperSecretToken',
+    helpScoutClient = createHelpScoutClient(),
+    helpScoutMailboxes = {
+      data: [{ mailboxId: 1234, repositories: [5678] }],
+    },
+  }: Partial<ServiceConfiguration> = {}) =>
+    createService({
+      githubWebhookSecret,
+      helpScoutClient,
+      helpScoutMailboxes,
+    });
+
   const createGithubSignature = ({ secrect, payload }: { secrect: string; payload: string }) => {
     const digest = crypto
       .createHmac('sha1', secrect)
@@ -52,7 +68,7 @@ describe('service', () => {
   it('expext to return a 405 with a method different than `POST`', async () => {
     expect.assertions(9);
 
-    const server = micro(service);
+    const server = micro(createTestService());
     const endpoint = await listen(server);
 
     try {
@@ -91,7 +107,7 @@ describe('service', () => {
   it('expext to return a 401 with a signature that is not valid', async () => {
     expect.assertions(2);
 
-    const server = micro(service);
+    const server = micro(createTestService());
     const endpoint = await listen(server);
 
     try {
@@ -107,7 +123,7 @@ describe('service', () => {
   });
 
   it('expect to return a 202 without the `X-GitHub-Event` header', async () => {
-    const server = micro(service);
+    const server = micro(createTestService());
     const endpoint = await listen(server);
     const response = await requestWithGithubSignature({ endpoint });
 
@@ -120,7 +136,7 @@ describe('service', () => {
   });
 
   it('expect to return a 202 with the `X-GitHub-Event` header different than `issues`', async () => {
-    const server = micro(service);
+    const server = micro(createTestService());
     const endpoint = await listen(server);
 
     {
@@ -155,7 +171,7 @@ describe('service', () => {
   });
 
   it('expect to return a 202 with an `action` different than `opened`', async () => {
-    const server = micro(service);
+    const server = micro(createTestService());
     const endpoint = await listen(server);
 
     {
@@ -190,7 +206,7 @@ describe('service', () => {
   });
 
   it('expect to return a 202 for a repo that does not exist', async () => {
-    const server = micro(service);
+    const server = micro(createTestService());
     const endpoint = await listen(server);
     const response = await requestWithIssuesEvent({
       endpoint,
@@ -211,6 +227,7 @@ describe('service', () => {
   });
 
   it('expect to return a 201 that creates a HelpScout conversation', async () => {
+    const createCustomerConversation = jest.fn(() => Promise.resolve());
     const getAccessToken = jest.fn(() =>
       Promise.resolve({
         data: {
@@ -219,14 +236,13 @@ describe('service', () => {
       })
     );
 
-    const createCustomerConversation = jest.fn(() => Promise.resolve());
+    const helpScoutClient = createHelpScoutClient();
+    (helpScoutClient.getAccessToken as jest.Mock).mockImplementationOnce(getAccessToken);
+    (helpScoutClient.createCustomerConversation as jest.Mock).mockImplementationOnce(
+      createCustomerConversation
+    );
 
-    (createHelpScoutClient as jest.Mock).mockImplementation(() => ({
-      getAccessToken,
-      createCustomerConversation,
-    }));
-
-    const server = micro(service);
+    const server = micro(createTestService({ helpScoutClient }));
     const endpoint = await listen(server);
 
     const response = await requestWithIssuesEvent({
