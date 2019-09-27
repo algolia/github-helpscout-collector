@@ -46,6 +46,7 @@ type HScoutCustomerConversationOptions = {
   conversation: {
     subject: string;
     mailboxId: number;
+    assignTo?: number;
     customer: {
       email: string;
     };
