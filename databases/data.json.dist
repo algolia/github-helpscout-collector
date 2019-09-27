@@ -1,11 +1,12 @@
 {
   "data": [
-    [
-      <mailboxId>,
-      [
+    {
+      "mailboxId": <mailboxId>,
+      "assignTo": <assignTo>,
+      "repositories": [
         <repoId>,
         <repoId>,
       ]
-    ]
+    }
   ]
 }

@@ -12,7 +12,7 @@ describe('database', () => {
       const filePath = join(__dirname, '__tmp');
 
       const value: Db = {
-        data: [[15, [20, 21]]],
+        data: [{ mailboxId: 15, repositories: [20, 21] }],
       };
 
       await writeFileAsync(filePath, JSON.stringify(value));

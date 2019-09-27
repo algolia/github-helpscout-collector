@@ -2,7 +2,11 @@ import { readFile } from 'fs';
 import { promisify } from 'util';
 
 export type Db = {
-  data: Array<[number, number[]]>;
+  data: Array<{
+    mailboxId: number;
+    assignTo?: number;
+    repositories: number[];
+  }>;
 };
 
 const readFileAsync = promisify(readFile);

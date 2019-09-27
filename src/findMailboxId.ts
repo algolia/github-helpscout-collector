@@ -1,7 +1,11 @@
 import { Db } from './database';
 
-export const findMailboxId = (database: Db, repoId: number): number | null => {
-  const [mailboxId = null] = database.data.find(([_, ids]) => ids.some(id => id === repoId)) || [];
+export const findMailbox = (
+  database: Db,
+  repoId: number
+): { mailboxId: number | null; assignTo?: number } => {
+  const { mailboxId = null, assignTo = undefined } =
+    database.data.find(({ repositories }) => repositories.some(id => id === repoId)) || {};
 
-  return mailboxId;
+  return { mailboxId, assignTo };
 };
