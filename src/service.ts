@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import { RequestHandler, createError, text, json, send } from 'micro';
 import { validateGithubSignature } from './githubSignature';
 import { mount } from './database';
-import { findMailbox } from './findMailboxId';
+import { findMailbox } from './findMailbox';
 import { createHelpScoutClient } from './helpScoutClient';
 import { formatText } from './helpScoutTemplate';
 
@@ -62,11 +62,13 @@ const service: RequestHandler = async (req, res) => {
 
   const database = await mount(databasePath);
 
-  const { mailboxId, assignTo } = findMailbox(database, body.repository.id);
+  const mailbox = findMailbox(database, body.repository.id);
 
-  if (mailboxId === null) {
+  if (mailbox === null) {
     return send(res, 202, `The hook does not support the repo: "${body.repository.id}"`);
   }
+
+  const { mailboxId, assignTo } = mailbox;
 
   const helpScoutClient = createHelpScoutClient({
     appId: helpScoutAppId,

@@ -1,12 +1,14 @@
 import { readFile } from 'fs';
 import { promisify } from 'util';
 
+export type Datum = {
+  mailboxId: number;
+  assignTo?: number;
+  repositories: number[];
+};
+
 export type Db = {
-  data: Array<{
-    mailboxId: number;
-    assignTo?: number;
-    repositories: number[];
-  }>;
+  data: Datum[];
 };
 
 const readFileAsync = promisify(readFile);
