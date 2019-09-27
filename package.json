@@ -38,8 +38,8 @@
     "typescript": "3.2.2"
   },
   "dependencies": {
-    "axios": "0.18.0",
-    "marked": "0.6.0",
+    "axios": "0.18.1",
+    "marked": "0.6.1",
     "micro": "9.3.3"
   }
 }
