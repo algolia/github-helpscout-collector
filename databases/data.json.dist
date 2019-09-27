@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "label": <teamLabel>,
+      "label": <teamName>,
       "mailboxId": <mailboxId>,
       "assignTo": <assignTo>,
       "repositories": [

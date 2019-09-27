@@ -5,20 +5,23 @@ This is a server to collect `issues` events from GitHub through [webhooks](https
 ```json
 {
   "data": [
-    [
-      "<mailboxId>",
-      [
-        "<repoId>",
-        "<repoId>"
+    {
+      "label": <teamName>,
+      "mailboxId": <mailboxId>,
+      "assignTo": <assignTo>,
+      "repositories": [
+        <repoId>,
+        <repoId>,
       ]
-    ],
-    [
-      "<mailboxId>",
-      [
-        "<repoId>",
-        "<repoId>"
+    },
+    {
+      "label": <teamName>,
+      "mailboxId": <mailboxId>,
+      "repositories": [
+        <repoId>,
+        <repoId>,
       ]
-    ]
+    }
   ]
 }
 ```
