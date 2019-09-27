@@ -32,6 +32,7 @@ This is a server to collect `issues` events from GitHub through [webhooks](https
 GITHUB_WEBHOOK_SECRET=yourGitHubWebTokenSecret \
 HELP_SCOUT_APP_ID=yourHelpScoutAppId \
 HELP_SCOUT_APP_SECRET=yourHelpScoutAppSecrect \
+HELP_SCOUT_MAILBOXES={...} \
 yarn start
 ```
 
@@ -41,6 +42,7 @@ yarn start
 GITHUB_WEBHOOK_SECRET=yourGitHubWebTokenSecret \
 HELP_SCOUT_APP_ID=yourHelpScoutAppId \
 HELP_SCOUT_APP_SECRET=yourHelpScoutAppSecrect \
+HELP_SCOUT_MAILBOXES={...} \
 yarn dev
 ```
 
