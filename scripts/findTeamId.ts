@@ -5,7 +5,7 @@ import { createHelpScoutClient } from '../src/helpScoutClient';
 type Answers = {
   helpScoutAppId: string;
   helpScoutAppSecret: string;
-  helpScoutMailboxName: string;
+  helpScoutTeamName: string;
 };
 
 const questions = [
@@ -21,32 +21,32 @@ const questions = [
   },
   {
     type: 'input',
-    name: 'helpScoutMailboxName',
-    message: 'HelpScout mailbox name',
+    name: 'helpScoutTeamName',
+    message: 'HelpScout team name',
   },
 ];
 
 inquirer
   .prompt<Answers>(questions)
-  .then(async ({ helpScoutAppId, helpScoutAppSecret, helpScoutMailboxName }) => {
+  .then(async ({ helpScoutAppId, helpScoutAppSecret, helpScoutTeamName }) => {
     const helpScoutClient = createHelpScoutClient({
       appId: helpScoutAppId,
       appSecret: helpScoutAppSecret,
     });
 
     const { data: reponseAccessToken } = await helpScoutClient.getAccessToken();
-    const { data: responseMailboxes } = await helpScoutClient.getMailboxes({
+    const { data: responseTeams } = await helpScoutClient.getTeams({
       accessToken: reponseAccessToken.access_token,
     });
 
-    const mailboxes = responseMailboxes._embedded.mailboxes.filter(mailbox =>
-      mailbox.name.toLowerCase().includes(helpScoutMailboxName.toLowerCase())
+    const teams = responseTeams._embedded.teams.filter(team =>
+      team.name.toLowerCase().includes(helpScoutTeamName.toLowerCase())
     );
 
-    if (mailboxes.length) {
+    if (teams.length) {
       console.log();
-      mailboxes.forEach(mailbox => {
-        console.log(`📬 ${chalk.bold(mailbox.name)}: ${chalk.cyan(mailbox.id.toString())}`);
+      teams.forEach(team => {
+        console.log(`👥 ${chalk.bold(team.name)}: ${chalk.cyan(team.id.toString())}`);
       });
       console.log();
 
@@ -54,8 +54,8 @@ inquirer
     }
 
     console.log();
-    responseMailboxes._embedded.mailboxes.forEach(mailbox => {
-      console.log(`📬 ${chalk.bold(mailbox.name)}: ${chalk.cyan(mailbox.id.toString())}`);
+    responseTeams._embedded.teams.forEach(team => {
+      console.log(`👥 ${chalk.bold(team.name)}: ${chalk.cyan(team.id.toString())}`);
     });
     console.log();
   });

@@ -77,6 +77,50 @@ describe('helpScout', () => {
     });
   });
 
+  describe('getTeams', () => {
+    it('expect to return a list of teams', async () => {
+      helpScoutNock.get('/teams').reply(() => {
+        return [
+          200,
+          {
+            _embedded: {
+              teams: [
+                {
+                  name: 'Team A',
+                },
+                {
+                  name: 'Team B',
+                },
+              ],
+            },
+          },
+        ];
+      });
+
+      const client = createHelpScoutClient({
+        appId: 'YOUR_APP_ID',
+        appSecret: 'YOUR_APP_SECRET',
+      });
+
+      const response = await client.getTeams({
+        accessToken: 'YOUR_ACCESS_TOKEN',
+      });
+
+      expect(response.data).toEqual({
+        _embedded: {
+          teams: [
+            {
+              name: 'Team A',
+            },
+            {
+              name: 'Team B',
+            },
+          ],
+        },
+      });
+    });
+  });
+
   describe('createCustomerConversation', () => {
     it('expect to create a customer converstation', async () => {
       helpScoutNock

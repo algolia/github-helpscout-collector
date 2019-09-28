@@ -1,14 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
 
-type Mailbox = {
-  id: number;
-  name: string;
-  slug: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 type HScoutClientOptions = {
   appId: string;
   appSecret: string;
@@ -35,9 +26,39 @@ type HScoutMailboxesOptions = {
   accessToken: string;
 };
 
+type HScoutMailbox = {
+  id: number;
+  name: string;
+  slug: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 type HScoutMailboxesReponse = {
   _embedded: {
-    mailboxes: Mailbox[];
+    mailboxes: HScoutMailbox[];
+  };
+};
+
+type HScoutTeamsOptions = {
+  accessToken: string;
+};
+
+type HScoutTeam = {
+  id: string;
+  name: string;
+  timezone: string;
+  photoUrl: string;
+  createdAt: string;
+  updatedAt: string;
+  mention: string;
+  initials: string;
+};
+
+type HScoutTeamsReponse = {
+  _embedded: {
+    teams: HScoutTeam[];
   };
 };
 
@@ -89,6 +110,18 @@ export const createHelpScoutClient = (clientOptions: HScoutClientOptions) => {
 
       return request<HScoutMailboxesReponse>({
         endpoint: '/mailboxes',
+        method: 'GET',
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+    },
+
+    getTeams(options: HScoutTeamsOptions): HScoutResponse<HScoutTeamsReponse> {
+      const { accessToken } = options;
+
+      return request<HScoutTeamsReponse>({
+        endpoint: '/teams',
         method: 'GET',
         headers: {
           authorization: `Bearer ${accessToken}`,
