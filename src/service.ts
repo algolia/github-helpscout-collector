@@ -6,6 +6,7 @@ import { mount } from './database';
 import { findMailbox } from './findMailbox';
 import { createHelpScoutClient } from './helpScoutClient';
 import { formatText } from './helpScoutTemplate';
+import { encodeHTML } from './encodeHTML';
 
 const githubWebhookSecret = process.env.GITHUB_WEBHOOK_SECRET || 'mySuperSecretToken';
 
@@ -82,7 +83,7 @@ const service: RequestHandler = async (req, res) => {
     conversation: {
       mailboxId,
       assignTo,
-      subject: body.issue.title,
+      subject: encodeHTML(body.issue.title),
       customer: {
         email: 'support+github@algolia.com',
       },
