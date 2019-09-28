@@ -78,14 +78,12 @@ const service: RequestHandler = async (req, res) => {
 
   const { data: reponseAccessToken } = await helpScoutClient.getAccessToken();
 
-  const subject = encodeHTML(body.issue.title);
-
   await helpScoutClient.createCustomerConversation({
     accessToken: reponseAccessToken.access_token,
     conversation: {
       mailboxId,
       assignTo,
-      subject,
+      subject: encodeHTML(body.issue.title),
       customer: {
         email: 'support+github@algolia.com',
       },
