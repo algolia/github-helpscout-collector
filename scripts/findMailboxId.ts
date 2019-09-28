@@ -40,7 +40,7 @@ inquirer
     });
 
     const mailboxes = responseMailboxes._embedded.mailboxes.filter(mailbox =>
-      mailbox.name.toLowerCase().includes(helpScoutMailboxName)
+      mailbox.name.toLowerCase().includes(helpScoutMailboxName.toLowerCase())
     );
 
     if (mailboxes.length) {
