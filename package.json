@@ -2,7 +2,7 @@
   "name": "github-helpscout-collector",
   "private": true,
   "description": "Push GitHub issues to HelpScout",
-  "main": "dist/service.js",
+  "main": "dist/main.js",
   "author": "Vaillant Samuel <samuel.vllnt@gmail.com>",
   "license": "MIT",
   "scripts": {

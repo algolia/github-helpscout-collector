@@ -1,7 +1,7 @@
-import { Db, Datum } from './database';
+import { Mailbox } from './createService';
 
-export const findMailbox = (database: Db, repoId: number): Datum | null => {
-  const mailbox = database.data.find(({ repositories }) => repositories.some(id => id === repoId));
+export const findMailbox = (mailboxes: Mailbox[], repoId: number): Mailbox | null => {
+  const mailbox = mailboxes.find(({ repositories }) => repositories.some(id => id === repoId));
 
   if (!mailbox) {
     return null;
