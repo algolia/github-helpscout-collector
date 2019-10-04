@@ -73,10 +73,10 @@ export const createService: (configuration: ServiceConfiguration) => RequestHand
 
     const { mailboxId, assignTo } = mailbox;
 
-    const { data: reponseAccessToken } = await helpScoutClient.getAccessToken();
+    const { data: responseAccessToken } = await helpScoutClient.getAccessToken();
 
     await helpScoutClient.createCustomerConversation({
-      accessToken: reponseAccessToken.access_token,
+      accessToken: responseAccessToken.access_token,
       conversation: {
         mailboxId,
         assignTo,
