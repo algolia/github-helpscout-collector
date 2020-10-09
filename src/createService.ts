@@ -58,7 +58,7 @@ export const createService: (configuration: ServiceConfiguration) => RequestHand
     const githubEventTypeHeader = req.headers['x-github-event'];
 
     if (!githubEventTypeHeader || !supportedPayloads.includes(githubEventTypeHeader)) {
-      return send(res, 202, 'Only the events ${supportedPayloads.join(', '} are supported by the hook');
+      return send(res, 202, `Only the events ${supportedPayloads.join(', '} are supported by the hook`);
     }
 
     const body = (await json(req)) as IssueEventPayload;
