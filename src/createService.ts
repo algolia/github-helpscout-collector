@@ -31,6 +31,8 @@ type IssueEventPayload = {
   };
 };
 
+const supportedPayloads = ['issues', 'discussions'];
+
 export const createService: (configuration: ServiceConfiguration) => RequestHandler = ({
   githubWebhookSecret,
   helpScoutClient,
@@ -55,8 +57,8 @@ export const createService: (configuration: ServiceConfiguration) => RequestHand
 
     const githubEventTypeHeader = req.headers['x-github-event'];
 
-    if (!githubEventTypeHeader || githubEventTypeHeader !== 'issues') {
-      return send(res, 202, 'Only the event `issues` is supported by the hook');
+    if (!githubEventTypeHeader || !supportedPayloads.includes(githubEventTypeHeader)) {
+      return send(res, 202, 'Only the events ${supportedPayloads.join(', '} are supported by the hook');
     }
 
     const body = (await json(req)) as IssueEventPayload;
